@@ -1,10 +1,10 @@
-import { ARCHETYPE_ORDER, ENEMY_ARCHETYPES } from "@/src/config/enemy-archetypes";
-import { BATTLE_CONFIG, floorMultiplier } from "@/src/config/battle.config";
+import { ARCHETYPE_ORDER, ENEMY_ARCHETYPES } from "@/config/enemy-archetypes";
+import { BATTLE_CONFIG, floorMultiplier } from "@/config/battle.config";
 import type { EnemyStats } from "./battle.types";
 
 export function generateEnemy(floor: number): EnemyStats {
   const safeFloor = Math.max(1, Math.floor(floor));
-  const archetype = ARCHETYPE_ORDER[(safeFloor - 1) % ARCHETYPE_ORDER.length];
+  const archetype = ARCHETYPE_ORDER[(safeFloor - 1) % ARCHETYPE_ORDER.length]!;
   const config = ENEMY_ARCHETYPES[archetype];
   const growth = floorMultiplier(safeFloor);
   const maxHp = Math.round(BATTLE_CONFIG.baseEnemy.maxHp * growth * config.hp);

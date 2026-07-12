@@ -1,0 +1,2 @@
+import { useGameStore } from "@/stores/game-store";
+export function StartScreen() { const begin = useGameStore((s) => s.begin); return <main className="start-screen"><div className="moon"/><div className="start-tower">塔<span>語</span></div><p className="kicker">LEARN · GROW · ASCEND</p><h1>言ノ葉の塔</h1><p className="start-copy">일본어를 익히고, 끝없는 탑을 오른다.<br/>전투는 성장의 결과를 보여줄 뿐.</p><button className="primary large" onClick={begin}>탑에 오르기 <span>→</span></button><small>화면을 터치하면 오디오가 활성화됩니다</small></main>; }
