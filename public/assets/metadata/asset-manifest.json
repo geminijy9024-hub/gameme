@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "selectedArtDirection": "paper-diorama",
+  "assets": [
+    { "id": "bg-floor-001", "type": "background", "path": "/assets/art/backgrounds/floor-001-training-tower.png", "floors": [1, 99] }
+  ]
+}

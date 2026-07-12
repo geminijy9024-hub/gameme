@@ -6,15 +6,15 @@ import { storage } from "@/services/storage";
 import { loadGame, saveGame } from "@/services/storage/game-save";
 
 export type Route = "tower" | "study" | "growth" | "settings" | "debug";
-export interface GameSettings { music: boolean; sound: boolean; haptics: boolean; reducedMotion: boolean }
-const INITIAL_SETTINGS: GameSettings = { music: true, sound: true, haptics: true, reducedMotion: false };
+export interface GameSettings { music: boolean; sound: boolean; haptics: boolean; reducedMotion: boolean; battleSpeed: 1 | 1.5 | 2 }
+const INITIAL_SETTINGS: GameSettings = { music: true, sound: true, haptics: true, reducedMotion: false, battleSpeed: 1 };
 const STORAGE_KEY = "kotoba-tower-progress-v2";
 
 interface GameState {
   hydrated: boolean; started: boolean; route: Route; player: PlayerStats; floor: number; highestFloor: number; winStreak: number;
   learning: LearningProgress; settings: GameSettings; result: BattleResult | null; runId: number; battling: boolean;
   hydrate: () => Promise<void>; begin: () => void; navigate: (route: Route) => void; startBattle: () => void; finishPlayback: () => void;
-  study: (area: StudyArea, xp: number) => void; setFloor: (floor: number) => void; toggleSetting: (key: keyof GameSettings) => void; reset: () => Promise<void>;
+  study: (area: StudyArea, xp: number) => void; setFloor: (floor: number) => void; toggleSetting: (key: "music" | "sound" | "haptics" | "reducedMotion") => void; cycleBattleSpeed: () => void; reset: () => Promise<void>;
 }
 
 function snapshot(state: GameState) {
@@ -50,6 +50,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
   setFloor: (value) => { const floor = Math.max(1, Math.floor(value)); set({ floor, highestFloor: Math.max(get().highestFloor, floor), result: null, battling: false }); void save(get()); },
   toggleSetting: (key) => { set((state) => ({ settings: { ...state.settings, [key]: !state.settings[key] } })); void save(get()); },
+  cycleBattleSpeed: () => { const current = get().settings.battleSpeed; const battleSpeed = current === 1 ? 1.5 : current === 1.5 ? 2 : 1; set((state) => ({ settings: { ...state.settings, battleSpeed } })); void save(get()); },
   reset: async () => { await storage.remove(STORAGE_KEY); set({ player: INITIAL_PLAYER, floor: 1, highestFloor: 1, winStreak: 0, learning: INITIAL_PROGRESS, settings: INITIAL_SETTINGS, result: null, battling: false, route: "tower" }); }
 }));
 

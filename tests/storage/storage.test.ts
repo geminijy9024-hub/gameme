@@ -13,8 +13,13 @@ class MemoryStorage implements StorageAdapter {
 describe("progress storage", () => {
   it("저장한 진행도를 검증해 복원한다", async () => {
     const adapter = new MemoryStorage();
-    const progress = { player: INITIAL_PLAYER, floor: 1000, highestFloor: 1000, winStreak: 7, learning: INITIAL_PROGRESS, settings: { music: true, sound: true, haptics: true, reducedMotion: false }, lastResult: null };
+    const progress = { player: INITIAL_PLAYER, floor: 1000, highestFloor: 1000, winStreak: 7, learning: INITIAL_PROGRESS, settings: { music: true, sound: true, haptics: true, reducedMotion: false, battleSpeed: 1 as const }, lastResult: null };
     await saveGame(adapter, "save", progress);
     await expect(loadGame(adapter, "save")).resolves.toEqual(progress);
+  });
+
+  it("잘못된 저장 데이터는 안전하게 거부한다", async () => {
+    const adapter = new MemoryStorage(); adapter.values.set("broken", JSON.stringify({ floor: -10, player: "invalid" }));
+    await expect(loadGame(adapter, "broken")).resolves.toBeNull();
   });
 });

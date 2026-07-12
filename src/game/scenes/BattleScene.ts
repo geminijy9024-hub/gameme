@@ -11,11 +11,13 @@ export class BattleScene extends Phaser.Scene {
   private hp!: Phaser.GameObjects.Graphics; private lagHp!: Phaser.GameObjects.Graphics; private enemyHp!: Phaser.GameObjects.Graphics; private lagEnemyHp!: Phaser.GameObjects.Graphics; private shield!: Phaser.GameObjects.Graphics;
   constructor() { super("BattleScene"); }
   init(data: BattleSceneData): void { this.dataValue = data; }
+  preload(): void { this.load.image("floor-001", "/assets/art/backgrounds/floor-001-training-tower.png"); }
   create(): void {
     const { width, height } = this.scale; this.cameras.main.setBackgroundColor("#0b1024");
-    this.add.rectangle(width / 2, height * .78, width, height * .44, 0x151d39).setStrokeStyle(1, 0x7186c8, .18);
-    this.add.circle(width * .5, height * .18, 88, 0x6959aa, .13); this.add.circle(width * .5, height * .18, 64, 0xf8dd9a, .06);
-    for (let i = 0; i < 22; i += 1) this.add.circle((i * 79) % width, 35 + ((i * 53) % 220), 1.2, 0xc5d2ff, .35);
+    if (this.dataValue.result.floor <= 99) this.add.image(width / 2, height / 2, "floor-001").setDisplaySize(width, height).setAlpha(.72);
+    else { this.add.rectangle(width / 2, height * .78, width, height * .44, 0x151d39).setStrokeStyle(1, 0x7186c8, .18); this.add.circle(width * .5, height * .18, 88, 0x6959aa, .13); }
+    this.add.rectangle(width / 2, height / 2, width, height, 0x071020, .18);
+    for (let i = 0; i < 18; i += 1) this.add.circle((i * 79) % width, 35 + ((i * 53) % 220), 1.2, 0xc5d2ff, .35);
     this.add.text(width / 2, 18, `${this.dataValue.result.floor}F`, { fontFamily: "system-ui", fontSize: "22px", fontStyle: "bold", color: "#fff0bc" }).setOrigin(.5, 0);
     this.player = this.fighter(width * .24, height * .67, 0xf2b650, false); this.enemy = this.fighter(width * .76, height * .63, 0xf06478, true);
     this.lagHp = this.add.graphics(); this.hp = this.add.graphics(); this.lagEnemyHp = this.add.graphics(); this.enemyHp = this.add.graphics(); this.shield = this.add.graphics(); this.bars(this.dataValue.result.events[0]!);
@@ -46,7 +48,11 @@ export class BattleScene extends Phaser.Scene {
       const origin = attacker.x; this.tweens.chain({ targets: attacker, tweens: [
         { x: origin - direction * 10, scaleX: .94, duration: 70 },
         { x: origin + direction * 92, scaleX: 1.08, duration: 65, ease: "Quad.easeIn", onComplete: () => {
-          this.cameras.main.shake(75, .008); this.cameras.main.flash(55, 255, 244, 207, false); this.damageText(target, event); if (this.dataValue.sound) gameAudio.hit(event.actor === "player" ? 180 : 110); void impact(this.dataValue.haptics);
+          const ghost = this.add.ellipse(attacker.x - direction * 22, attacker.y, 45, 100, event.actor === "player" ? 0xf2b650 : 0xf06478, .2); this.tweens.add({ targets: ghost, alpha: 0, duration: 120, onComplete: () => ghost.destroy() });
+          this.cameras.main.shake(75, .008); this.cameras.main.flash(55, 255, 244, 207, false); this.damageText(target, event);
+          if ((event.blockedPhysical ?? 0) > 0) { const wave = this.add.circle(target.x, target.y - 20, 22, 0x55c7f2, .14).setStrokeStyle(3, 0x8de4ff, .9); this.tweens.add({ targets: wave, scale: 2.2, alpha: 0, duration: 190, onComplete: () => wave.destroy() }); }
+          if (this.dataValue.sound) { gameAudio.play((event.blockedPhysical ?? 0) > 0 ? "shield-hit" : event.actor === "player" ? "physical-attack" : "heavy-hit"); } void impact(this.dataValue.haptics);
+          this.tweens.timeScale = .12; window.setTimeout(() => { if (this.tweens) this.tweens.timeScale = 1; }, 62);
           this.tweens.add({ targets: target, scaleX: 1.18, scaleY: .82, x: target.x + direction * 7, duration: 55, yoyo: true });
         } },
         { x: origin - direction * 7, duration: 95 }, { x: origin, scaleX: 1, duration: 70 }
@@ -60,8 +66,8 @@ export class BattleScene extends Phaser.Scene {
       if ((event.blockedPhysical ?? 0) > 0) void this.float(target.x, target.y - 78, "BLOCK", "#80cfff", 14);
     } else void this.float(target.x, target.y - 100, `-${event.amount ?? 0}`, "#ff7883", 25);
   }
-  private heal(event: BattleEvent): Promise<void> { this.tweens.add({ targets: this.enemy, tint: 0x66ff99, duration: 130, yoyo: true }); return this.float(this.enemy.x, this.enemy.y - 105, `+${event.amount ?? 0}`, "#70ee9d", 24); }
-  private breakShield(): Promise<void> { for (let i = 0; i < 12; i += 1) { const p = this.add.rectangle(this.enemy.x, this.enemy.y - 30, 5, 10, 0x71cfff); this.tweens.add({ targets: p, x: p.x + Math.cos(i) * (35 + i * 3), y: p.y + Math.sin(i) * (35 + i * 2), alpha: 0, angle: 120, duration: 360, onComplete: () => p.destroy() }); } return this.float(this.enemy.x, this.enemy.y - 145, "結界破壊", "#79d5ff", 22); }
+  private heal(event: BattleEvent): Promise<void> { if (this.dataValue.sound) gameAudio.play("heal"); this.tweens.add({ targets: this.enemy, tint: 0x66ff99, duration: 130, yoyo: true }); return this.float(this.enemy.x, this.enemy.y - 105, `+${event.amount ?? 0}`, "#70ee9d", 24); }
+  private breakShield(): Promise<void> { if (this.dataValue.sound) gameAudio.play("shield-break"); for (let i = 0; i < 12; i += 1) { const p = this.add.rectangle(this.enemy.x, this.enemy.y - 30, 5, 10, 0x71cfff); this.tweens.add({ targets: p, x: p.x + Math.cos(i) * (35 + i * 3), y: p.y + Math.sin(i) * (35 + i * 2), alpha: 0, angle: 120, duration: 360, onComplete: () => p.destroy() }); } return this.float(this.enemy.x, this.enemy.y - 145, "結界破壊", "#79d5ff", 22); }
   private bars(event: BattleEvent): void {
     const draw = (g: Phaser.GameObjects.Graphics, x: number, y: number, ratio: number, color: number, alpha = 1) => { g.clear().fillStyle(0x222a43, .9).fillRoundedRect(x, y, 142, 9, 5).fillStyle(color, alpha).fillRoundedRect(x, y, Math.max(0, 142 * ratio), 9, 5); };
     const p = event.playerHp / this.dataValue.result.events[0]!.playerHp; const e = event.enemyHp / this.dataValue.result.enemy.maxHp;

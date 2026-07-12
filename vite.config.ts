@@ -20,7 +20,7 @@ export default defineConfig({
         start_url: "/",
         icons: [{ src: "icons/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any maskable" }]
       },
-      workbox: { navigateFallback: "index.html", globPatterns: ["**/*.{js,css,html,svg,png,woff2}"] }
+      workbox: { navigateFallback: "index.html", globPatterns: ["**/*.{js,css,html,svg,png,json,woff2}"], maximumFileSizeToCacheInBytes: 3_000_000 }
     })
   ],
   resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },

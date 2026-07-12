@@ -48,6 +48,8 @@ npm run android:apk
 
 결과 파일은 `android/app/build/outputs/apk/debug/app-debug.apk`입니다. 배포용 APK/AAB는 별도 서명 키가 필요합니다.
 
+Google Play용 AAB는 Android Studio에서 **Build > Generate Signed Bundle / APK > Android App Bundle**을 선택하거나 서명 설정 후 `cd android && ./gradlew bundleRelease`로 생성합니다. 결과는 `android/app/build/outputs/bundle/release/app-release.aab`입니다.
+
 앱 ID는 `com.gameme.kotobatower`, 앱 이름은 `Kotoba Tower`이며 세로 방향으로 고정됩니다. Android 뒤로가기는 탑 이외 화면에서 탑으로 돌아가고, 탑에서는 앱을 최소화합니다. pause/resume은 Capacitor App 이벤트로 처리합니다.
 
 ## 아이콘과 스플래시 교체
@@ -70,6 +72,8 @@ npm run android:sync
 ```
 
 현재 PWA 아이콘은 `public/icons/icon.svg`, 게임 교체 자산 안내는 `public/assets/README.md`에 있습니다.
+
+아트 기준은 `docs/art-bible.md`, 계층 분리와 서버 확장 원칙은 `docs/architecture.md`에 있습니다. 3개 아트 방향 중 레이어드 화지 디오라마를 선택했으며 1층 전투에는 생성된 목조 수련탑 배경을 사용합니다. 자산과 오디오 슬롯, 라이선스 정보는 `public/assets/metadata/`의 JSON 매니페스트에서 관리합니다.
 
 ## 게임 흐름
 

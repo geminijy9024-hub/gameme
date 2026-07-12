@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "path": "art/backgrounds/floor-001-training-tower.png",
+      "creator": "OpenAI image generation for this project",
+      "source": "project-generated",
+      "license": "project-owned generated asset; review platform terms before commercial release",
+      "modified": false
+    },
+    {
+      "path": "docs/art-concepts/*.png",
+      "creator": "OpenAI image generation for this project",
+      "source": "project-generated",
+      "license": "project-owned generated concept assets; review platform terms before commercial release",
+      "modified": false
+    }
+  ]
+}
