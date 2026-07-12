@@ -1,4 +1,4 @@
-import type { EnemyArchetype } from "@/src/domains/battle/battle.types";
+import type { EnemyArchetype } from "@/domains/battle/battle.types";
 
 interface ArchetypeConfig {
   label: string;

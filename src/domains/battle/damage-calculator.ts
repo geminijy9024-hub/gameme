@@ -1,4 +1,4 @@
-import { BATTLE_CONFIG } from "@/src/config/battle.config";
+import { BATTLE_CONFIG } from "@/config/battle.config";
 
 export interface DamageResolution {
   nextHp: number;

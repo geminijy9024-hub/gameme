@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "strategy": "synth-fallback-until-owned-audio-is-added",
+  "sfx": ["physical-attack", "magic-attack", "hit", "heavy-hit", "shield-hit", "shield-break", "heal", "victory", "defeat", "floor-up", "button", "correct", "incorrect", "stat-up"],
+  "bgm": ["main", "tower-normal", "tower-high", "tower-barrier", "study"]
+}

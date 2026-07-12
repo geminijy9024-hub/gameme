@@ -1,4 +1,4 @@
-import { BATTLE_CONFIG } from "@/src/config/battle.config";
+import { BATTLE_CONFIG } from "@/config/battle.config";
 import { resolvePlayerDamage } from "./damage-calculator";
 import { analyzeDefeat } from "./defeat-analyzer";
 import { generateEnemy } from "./enemy-generator";
@@ -103,6 +103,7 @@ export function simulateBattle(input: BattleInput): BattleResult {
       stats,
       events,
       analysis: isFailure ? analyzeDefeat(input.player, enemy, stats, enemyHp, shield) : null,
+      progression: { floor: winner === "player" ? floor + 1 : floor, stopped: winner !== "player" },
     };
   }
 }

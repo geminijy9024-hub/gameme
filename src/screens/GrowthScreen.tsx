@@ -1,0 +1,5 @@
+import { ScreenHeader } from "@/components/ScreenHeader";
+import { STUDY_AREAS } from "@/domains/learning/learning";
+import { useGameStore } from "@/stores/game-store";
+const keys = ["attack", "maxHp", "speed", "magicDamage"] as const;
+export function GrowthScreen() { const s = useGameStore(); return <section className="screen padded"><ScreenHeader eyebrow="YOUR JOURNEY" title="성장의 기록" action={<div className="record"><small>최고층</small><b>{s.highestFloor}F</b></div>}/><div className="growth-hero"><span>総合力</span><b>{s.player.attack + s.player.maxHp + s.player.speed + s.player.magicDamage}</b><small>네 영역의 힘</small></div><div className="stat-grid">{STUDY_AREAS.map((a, i) => <article key={a.id} style={{ "--area": a.color } as React.CSSProperties}><span>{a.glyph}</span><small>{a.ko}</small><b>{s.player[keys[i]!]}</b><p>{a.stat}</p><em>{s.learning[a.id]} XP</em></article>)}</div><div className="mapping-card"><h3>학습이 곧 전투력</h3><p>언어지식 → 일반 공격력</p><p>독해 → 최대 체력</p><p>청해 → 속도와 선공권</p><p>회화 → 마법 피해</p></div></section>; }

@@ -75,4 +75,5 @@ export interface BattleResult {
   stats: BattleStats;
   events: BattleEvent[];
   analysis: DefeatAnalysis | null;
+  progression: { floor: number; stopped: boolean };
 }
